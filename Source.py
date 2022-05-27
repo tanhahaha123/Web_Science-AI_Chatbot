@@ -28,16 +28,17 @@ class ChatBot():
 #         except:
 #              print("me -->  ERROR")
 
-    # def wake_up(self, text):
-    #     return True if self.name in text.lower() else False
-    def wake_up(self):
+    def text_input(self):
         self.text = input("me --> ")
-        return True if self.text  == self.name else False
+    def wake_up(self, text):
+        return True if self.name.lower() in text.lower() else False
+
+
 
 
     @staticmethod
-    def text_to_speech(text):
-        print("Dev --> ", text)
+    def text_to_speech(name, text):
+        print(name + "--> ", text)
         speaker = gTTS(text=text, lang="en", slow=False)
         speaker.save("res.mp3")
         statbuf = os.stat("res.mp3")
@@ -54,14 +55,16 @@ class ChatBot():
 
 # Execute the AI
 if __name__ == "__main__":
-     ai = ChatBot(name="Dev")
+     ai = ChatBot(name="Boty")
      nlp = transformers.pipeline("conversational", model="microsoft/DialoGPT-medium")
      os.environ["TOKENIZERS_PARALLELISM"] = "true"
-     while True:
+     ex = True
+     while ex:
          # ai.speech_to_text()
+         ai.text_input()
          ## wake up
-         if ai.wake_up() is True:
-             res = "Hello I am Dev the AI, what can I do for you?"
+         if ai.wake_up(ai.text) is True:
+             res = "Hello I am " + ai.name +" the AI, what can I do for you?"
              ## do any action
          elif "time" in ai.text:
              res = ai.action_time()
@@ -80,5 +83,5 @@ if __name__ == "__main__":
                  chat = nlp(transformers.Conversation(ai.text), pad_token_id=50256)
                  res = str(chat)
                  res = res[res.find("bot >> ") + 6:].strip()
-         ai.text_to_speech(res)
-     print("----- Closing down Dev -----")
+         ai.text_to_speech(ai.name, res)
+     print("----- Closing down "+ ai.name +" -----")
